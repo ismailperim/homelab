@@ -1,0 +1,59 @@
+- name: Check if Homarr stack is already running
+  shell: docker stack ls | grep -w homarr
+  register: homarr_status
+  failed_when: false
+  changed_when: false
+
+- name: Ensure Homarr directory exists
+  file:
+    path: /opt/homarr
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: Deploy Homarr with Traefik configuration
+  copy:
+    dest: /opt/homarr/docker-compose.yml
+    content: |
+      version: "3.8"
+      services:
+        homarr:
+          image: ghcr.io/ajnart/homarr:latest
+          deploy:
+            mode: replicated
+            replicas: 1
+            placement:
+              constraints:
+                - node.role == manager
+          labels:
+            - "traefik.enable=true"
+            - "traefik.docker.network=traefik_public_network"
+            - "traefik.http.routers.homarr.rule=Host(`dash.labz.tr`)"
+            - "traefik.http.routers.homarr.entrypoints=websecure"
+            - "traefik.http.routers.homarr.tls.certresolver=myresolver"
+            - "traefik.http.services.homarr.loadbalancer.server.port=7575"
+          volumes:
+            - /var/run/docker.sock:/var/run/docker.sock
+            - homar_configs_data:/app/data/configs
+            - homar_icons_data:/app/public/icons
+            - homarr_data:/data
+          networks:
+            - traefik_public_network
+      networks:
+        traefik_public_network:
+          external: true
+      volumes:
+        homarr_data:
+        homar_configs_data:
+        homar_icons_data:
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Remove Existing Homarr stack
+  when: homarr_status.stdout != ""
+  shell: docker stack rm homarr
+
+- name: Deploy Homarr stack
+  shell: docker stack deploy -c /opt/homarr/docker-compose.yml homarr

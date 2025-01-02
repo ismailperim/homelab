@@ -1,0 +1,89 @@
+- name: Check if Pi-hole is already installed
+  stat:
+    path: /etc/pihole
+  register: pihole_installed
+
+- name: Ensure /etc/pihole directory exists
+  file:
+    path: /etc/pihole
+    state: directory
+    mode: "0755"
+  when: not pihole_installed.stat.exists
+
+- name: Configure Pi-hole setupVars
+  copy:
+    dest: /etc/pihole/setupVars.conf
+    content: |
+      DNSMASQ_LISTENING=single
+      PIHOLE_INTERFACE=eth0
+      IPV4_ADDRESS=192.168.1.102/24
+      DNS_FQDN_REQUIRED=true
+      DNS_BOGUS_PRIV=true
+      DNSSEC=false
+  when: not pihole_installed.stat.exists
+
+- name: Install Pi-hole
+  shell: "curl -sSL https://install.pi-hole.net | bash /dev/stdin --unattended"
+  when: not pihole_installed.stat.exists
+  args:
+    executable: /bin/bash
+
+- name: Verify Pi-hole service status
+  shell: "systemctl is-active pihole-FTL"
+  register: pihole_status
+  failed_when: "'active' not in pihole_status.stdout"
+  changed_when: false
+
+# 4. UFW Kurallarını Güncelle ve Aktif Et
+- name: Install UFW if not present
+  apt:
+    name: ufw
+    state: present
+
+- name: Allow SSH for 192.168.1.0/24
+  ufw:
+    rule: allow
+    name: "OpenSSH"
+    src: 192.168.1.0/24
+
+- name: Allow Pi-hole DNS ports (53 TCP) for 192.168.1.0/24
+  ufw:
+    rule: allow
+    port: 53
+    proto: "tcp"
+    src: 192.168.1.0/24
+
+- name: Allow Pi-hole DNS ports (53 UDP) for 192.168.1.0/24
+  ufw:
+    rule: allow
+    port: 53
+    proto: "udp"
+    src: 192.168.1.0/24
+
+- name: Allow Pi-hole Web port (80) only for 192.168.1.101
+  ufw:
+    rule: allow
+    port: 80
+    proto: "tcp"
+    src: 192.168.1.101
+
+- name: Allow Pi-hole Web port (80) only for 192.168.1.9
+  ufw:
+    rule: allow
+    port: 80
+    proto: "tcp"
+    src: 192.168.1.9
+
+- name: Enable UFW
+  ufw:
+    state: enabled
+    policy:
+      incoming: deny
+      outgoing: allow
+
+- name: Verify UFW status and rules
+  command: ufw status verbose
+  register: ufw_status
+
+- debug:
+    msg: "Firewall configuration completed. UFW status: {{ ufw_status.stdout }}"

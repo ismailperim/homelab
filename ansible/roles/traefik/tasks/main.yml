@@ -1,0 +1,41 @@
+- name: Check if Traefik is already running
+  shell: docker stack ls | grep -w traefik
+  register: traefik_status
+  failed_when: false
+  changed_when: false
+
+- name: Ensure Traefik directory exists
+  file:
+    path: /opt/traefik
+    state: directory
+
+- name: Ensure acme.json exists
+  file:
+    path: /opt/traefik/acme.json
+    state: touch
+    mode: "0600"
+    owner: root
+    group: root
+
+- name: Copy Traefik docker-compose file
+  template:
+    src: docker-compose.yml.j2
+    dest: /opt/traefik/docker-compose.yml
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Copy Traefik dynamic configuration file
+  copy:
+    src: dynamic.yml
+    dest: /opt/traefik/dynamic.yml
+    owner: root
+    group: root
+    mode: "0644"
+      
+- name: Remove Existing Traefik stack
+  when: traefik_status.stdout != ""
+  shell: docker service rm traefik_traefik
+  
+- name: Deploy Traefik stack
+  shell: docker stack deploy -c /opt/traefik/docker-compose.yml traefik

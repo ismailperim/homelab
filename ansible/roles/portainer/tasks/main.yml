@@ -1,0 +1,63 @@
+- name: Check if Portainer is already running
+  shell: docker stack ls | grep -w portainer
+  register: portainer_status
+  failed_when: false
+  changed_when: false
+
+- name: Ensure Portainer directory exists
+  when: portainer_status.stdout == ""
+  file:
+    path: /opt/portainer
+    state: directory
+
+- name: Deploy Portainer stack
+  when: portainer_status.stdout == ""
+  copy:
+    dest: /opt/portainer/docker-compose.yml
+    content: |
+      version: "3.8"
+      services:
+        agent:
+          image: portainer/agent:2.21.5
+          volumes:
+            - /var/run/docker.sock:/var/run/docker.sock
+            - /var/lib/docker/volumes:/var/lib/docker/volumes
+          networks:
+            - agent_network
+          deploy:
+            mode: global
+            placement:
+              constraints: [node.platform.os == linux]
+
+        portainer:
+          image: portainer/portainer-ce:2.21.5
+          command: -H tcp://tasks.agent:9001 --tlsskipverify
+          volumes:
+            - portainer_data:/data
+          networks:
+            - agent_network
+            - traefik_public_network
+          deploy:
+            mode: replicated
+            replicas: 1
+            placement:
+              constraints: [node.role == manager]
+          labels:
+            - "traefik.enable=true"
+            - "traefik.docker.network=traefik_public_network"
+            - "traefik.http.routers.portainer.rule=Host(`portainer.labz.tr`)"
+            - "traefik.http.routers.portainer.entrypoints=websecure"
+            - "traefik.http.routers.portainer.tls.certresolver=myresolver"
+            - "traefik.http.services.portainer.loadbalancer.server.port=9000"
+
+      networks:
+        traefik_public_network:
+          external: true
+        agent_network:
+
+      volumes:
+        portainer_data:
+
+- name: Start Portainer stack
+  when: portainer_status.stdout == ""
+  shell: docker stack deploy -c /opt/portainer/docker-compose.yml portainer

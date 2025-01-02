@@ -1,0 +1,11 @@
+- name: Check if Docker Swarm is active
+  command: docker info
+  register: docker_info
+  failed_when: false
+  changed_when: false
+
+- name: Initialize Docker Swarm
+  shell: docker swarm init
+  when:
+      - "'Swarm: active' not in docker_info.stdout"
+      - inventory_hostname == groups['swarm_manager'][0]

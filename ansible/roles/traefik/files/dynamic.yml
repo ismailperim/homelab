@@ -1,0 +1,41 @@
+http:
+  routers:
+    traefik:
+      rule: "Host(`traefik.labz.tr`)"
+      entryPoints:
+        - websecure
+      tls:
+        certresolver: myresolver
+      service: traefik-dashboard
+
+    metrics:
+      rule: "Host(`traefik.labz.tr`) && Path(`/metrics`)"
+      entryPoints:
+        - websecure
+      tls:
+        certresolver: myresolver
+      service: metrics-service
+
+    pihole:
+      rule: "Host(`pihole.labz.tr`)"
+      entryPoints:
+        - websecure
+      tls:
+        certresolver: myresolver
+      service: pihole-service
+
+  services:
+    traefik-dashboard:
+      loadBalancer:
+        servers:
+          - url: "http://127.0.0.1:8080"
+
+    metrics-service:
+      loadBalancer:
+        servers:
+          - url: "http://127.0.0.1:9100"
+
+    pihole-service:
+      loadBalancer:
+        servers:
+          - url: "http://192.168.1.102:80"

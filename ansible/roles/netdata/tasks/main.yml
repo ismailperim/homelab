@@ -1,0 +1,37 @@
+- name: Check if Netdata stack is already running
+  shell: docker stack ls | grep -w netdata
+  register: netdata_status
+  failed_when: false
+  changed_when: false
+
+- name: Ensure /opt/netdata directory exists
+  file:
+    path: /opt/netdata
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: Ensure Netdata volumes exist
+  docker_volume:
+    name: "{{ item }}"
+    state: present
+  loop:
+    - netdata_config_data
+    - netdata_lib_data
+    - netdata_cache_data
+
+- name: Copy Netdata Docker Compose file
+  copy:
+    src: docker-compose.yml
+    dest: /opt/netdata/docker-compose.yml
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Remove Existing Netdata stack
+  when: netdata_status.stdout != ""
+  shell: docker stack rm netdata
+
+- name: Deploy Netdata stack
+  shell: docker stack deploy -c /opt/netdata/docker-compose.yml netdata

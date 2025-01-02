@@ -1,0 +1,12 @@
+- hosts: app-p01
+  become: true
+  roles:
+    - maintenance
+    - localization
+    - docker-engine
+    - docker-swarm
+    - traefik
+    - portainer
+    - homarr
+    - netdata
+    

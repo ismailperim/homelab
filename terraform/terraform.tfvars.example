@@ -1,0 +1,10 @@
+pm_api_url = "https://proxmox-server:8006/api2/json"
+pm_api_token_id = "root@pam!terraform-token"
+pm_api_token_secret = "***YOUR_SECRET***"
+target_node = "pve1"
+storage = "local-lvm"
+clone_template = "ubuntu-cloud"
+gateway = "192.168.1.1"
+dns_primary = "192.168.1.101"
+dns_scondary = "8.8.8.8"
+ssh_keys = [ "***SSH_KEY***" ]

@@ -1,0 +1,6 @@
+- hosts: app-p02
+  become: true
+  roles:
+    - maintenance
+    - localization
+    - pihole
