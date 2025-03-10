@@ -1,0 +1,6 @@
+- hosts: app-p03
+  become: true
+  roles:
+    - maintenance
+    - localization
+    - homeassistant

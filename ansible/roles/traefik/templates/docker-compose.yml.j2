@@ -24,8 +24,8 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
       - /opt/traefik/:/opt/traefik/
     environment:
-      - CLOUDFLARE_EMAIL={{ cloudflare_email }}
-      - CLOUDFLARE_API_KEY={{ cloudflare_api_key }}
+      - CF_API_EMAIL={{ cloudflare_email }}
+      - CF_DNS_API_TOKEN={{ cloudflare_api_key }}
     networks:
       - traefik_public_network
 networks:

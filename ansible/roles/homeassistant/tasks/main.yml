@@ -1,0 +1,100 @@
+- name: Ensure dependencies are installed
+  apt:
+    name:
+      - python3 
+      - python3-dev 
+      - python3-venv 
+      - python3-pip 
+      - bluez 
+      - libffi-dev 
+      - libssl-dev 
+      - libjpeg-dev 
+      - zlib1g-dev 
+      - autoconf 
+      - build-essential 
+      - libopenjp2-7 
+      - libtiff6 
+      - libturbojpeg0-dev 
+      - tzdata 
+      - ffmpeg 
+      - liblapack3 
+      - liblapack-dev 
+      - libatlas-base-dev
+      - acl
+    state: present
+    update_cache: yes
+
+- name: Install extra Linux modules for Bluetooth
+  apt:
+    name: "linux-modules-extra-{{ ansible_kernel }}"
+    state: present
+    update_cache: yes
+
+- name: Reload btusb module
+  command: sudo modprobe btusb
+  become: yes
+
+- name: Create homeassistant user
+  user:
+    name: "{{ homeassistant_user }}"
+    system: yes
+    create_home: yes
+    shell: /bin/bash
+
+- name: Ensure Home Assistant config directory exists
+  file:
+    path: "{{ homeassistant_config_dir }}"
+    state: directory
+    owner: "{{ homeassistant_user }}"
+    group: "{{ homeassistant_user }}"
+    mode: "0755"
+
+- name: Create Python Virtual Environment for Home Assistant
+  command: python3 -m venv {{ homeassistant_config_dir }}
+  args:
+    creates: "{{ homeassistant_config_dir }}/bin/activate"
+  become: yes
+  become_user: "{{ homeassistant_user }}"
+
+- name: Install required Python package
+  pip:
+    name: wheel
+    virtualenv: "{{ homeassistant_config_dir }}"
+  become: yes
+  become_user: "{{ homeassistant_user }}"
+
+- name: Install Home Assistant
+  pip:
+    name: "homeassistant=={{ homeassistant_version }}"
+    virtualenv: "{{ homeassistant_config_dir }}"
+    virtualenv_python: python3
+    extra_args: "--no-cache-dir"
+  become: yes
+  become_user: "{{ homeassistant_user }}"
+
+- name: Create Home Assistant systemd service
+  copy:
+    dest: /etc/systemd/system/home-assistant.service
+    content: |
+      [Unit]
+      Description=Home Assistant
+      After=network.target bluetooth.target
+
+      [Service]
+      Type=simple
+      User={{ homeassistant_user }}
+      ExecStart={{ homeassistant_config_dir }}/bin/hass -c {{ homeassistant_config_dir }}
+      Restart=on-failure
+
+      [Install]
+      WantedBy=multi-user.target
+
+- name: Reload systemd daemon
+  systemd:
+    daemon_reload: yes
+
+- name: Enable and start Home Assistant service
+  systemd:
+    name: "home-assistant"
+    enabled: yes
+    state: started

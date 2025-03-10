@@ -1,0 +1,4 @@
+homeassistant_version: "2025.1.4"
+homeassistant_config_dir: "/srv/homeassistant"
+homeassistant_user: "homeassistant"
+homeassistant_service_name: "home-assistant"

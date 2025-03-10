@@ -22,6 +22,7 @@ resource "proxmox_vm_qemu" "vm" {
   target_node = var.target_node
   clone       = var.clone_template
   storage     = var.storage
+  qemu_os     = "other"
 
   cores   = var.cpu_cores
   sockets = var.cpu_sockets
