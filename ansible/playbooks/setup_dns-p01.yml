@@ -1,4 +1,4 @@
-- hosts: app-p02
+- hosts: dns-p01
   become: true
   roles:
     - maintenance

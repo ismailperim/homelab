@@ -1,10 +1,10 @@
 locals {
-  vmid       = 103
+  vmid       = 102
   cpu_cores  = 1
   memory     = 1024
   disk_size  = "60G"
-  hostname   = "app-p03"
-  ip_address = "192.168.1.103"
+  hostname   = "dns-p01"
+  ip_address = "192.168.1.102"
   connection = {
     type        = "ssh"
     user        = "perim.labz.tr"

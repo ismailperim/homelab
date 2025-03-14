@@ -12,7 +12,7 @@ The homelab setup uses a custom domain `labz.tr` for managing traffic securely o
 - **1 Physical Server**: Running Proxmox as the hypervisor.
 - **2 Virtual Machines (VMs)**:
   - **`app-p01`**: Hosts Docker services configured with Swarm and Portainer.
-  - **`app-p02`**: Dedicated to Pi-hole as a DNS server.
+  - **`dns-p01`**: Dedicated to Pi-hole as a DNS server.
 
 VMs are provisioned using Terraform, while Ansible handles software installations and operational maintenance.
 
@@ -76,7 +76,7 @@ A markdown file likely used to keep track of tasks, ideas, or notes related to t
 Managed by **Homarr**, providing a user-friendly interface to access and manage homelab services.
 
 ### DNS Server
-**Pi-hole** is configured on `app-p02` for network-wide DNS and ad-blocking. It is integrated with Traefik for secure SSL-based access.
+**Pi-hole** is configured on `dns-p01` for network-wide DNS and ad-blocking. It is integrated with Traefik for secure SSL-based access.
 
 ### Reverse Proxy
 **Traefik** is running on `app-p01` to manage routing and SSL certificates. It also handles service discovery and metrics exposure.

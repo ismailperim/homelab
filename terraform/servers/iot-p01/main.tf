@@ -1,10 +1,10 @@
 locals {
-  vmid       = 102
+  vmid       = 103
   cpu_cores  = 1
   memory     = 1024
   disk_size  = "60G"
-  hostname   = "app-p02"
-  ip_address = "192.168.1.102"
+  hostname   = "iot-p01"
+  ip_address = "192.168.1.103"
   connection = {
     type        = "ssh"
     user        = "perim.labz.tr"

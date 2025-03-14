@@ -26,8 +26,8 @@ module "server-app-p01" {
   ssh_keys            = var.ssh_keys
 }
 
-module "server-app-p02" {
-  source              = "./servers/app-p02"
+module "server-dns-p01" {
+  source              = "./servers/dns-p01"
   pm_api_url          = var.pm_api_url
   pm_api_token_id     = var.pm_api_token_id
   pm_api_token_secret = var.pm_api_token_secret
@@ -38,8 +38,8 @@ module "server-app-p02" {
   ssh_keys            = var.ssh_keys
 }
 
-module "server-app-p03" {
-  source              = "./servers/app-p03"
+module "server-iot-p01" {
+  source              = "./servers/iot-p01"
   pm_api_url          = var.pm_api_url
   pm_api_token_id     = var.pm_api_token_id
   pm_api_token_secret = var.pm_api_token_secret

@@ -1,4 +1,4 @@
-- hosts: app-p03
+- hosts: iot-p01
   become: true
   roles:
     - maintenance
