@@ -1,0 +1,6 @@
+- hosts: vpn-p01
+  become: true
+  roles:
+    - maintenance
+    - localization
+    - pritunl

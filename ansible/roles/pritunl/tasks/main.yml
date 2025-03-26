@@ -1,0 +1,90 @@
+---
+- name: Ensure gnupg is installed
+  apt:
+    name: gnupg
+    state: present
+    update_cache: true
+
+- name: Add MongoDB GPG key
+  ansible.builtin.get_url:
+    url: https://www.mongodb.org/static/pgp/server-8.0.asc
+    dest: /usr/share/keyrings/mongodb-server-8.0.gpg
+    mode: '0644'
+  register: mongodb_gpg
+  until: mongodb_gpg is succeeded
+  retries: 3
+  delay: 2
+
+- name: Add OpenVPN GPG key
+  ansible.builtin.get_url:
+    url: https://swupdate.openvpn.net/repos/repo-public.gpg
+    dest: /usr/share/keyrings/openvpn-repo.gpg
+    mode: '0644'
+  register: openvpn_gpg
+  until: openvpn_gpg is succeeded
+  retries: 3
+  delay: 2
+
+- name: Add Pritunl GPG key
+  ansible.builtin.get_url:
+    url: https://raw.githubusercontent.com/pritunl/pgp/master/pritunl_repo_pub.asc
+    dest: /usr/share/keyrings/pritunl.gpg
+    mode: '0644'
+  register: pritunl_gpg
+  until: pritunl_gpg is succeeded
+  retries: 3
+  delay: 2
+
+- name: Add MongoDB apt repository
+  ansible.builtin.apt_repository:
+    repo: "deb [signed-by=/usr/share/keyrings/mongodb-server-8.0.gpg] https://repo.mongodb.org/apt/ubuntu noble/mongodb-org/8.0 multiverse"
+    filename: mongodb-org
+    state: present
+    update_cache: false
+
+- name: Add OpenVPN apt repository
+  ansible.builtin.apt_repository:
+    repo: "deb [signed-by=/usr/share/keyrings/openvpn-repo.gpg] https://build.openvpn.net/debian/openvpn/stable noble main"
+    filename: openvpn
+    state: present
+    update_cache: false
+
+- name: Add Pritunl apt repository
+  ansible.builtin.apt_repository:
+    repo: "deb [signed-by=/usr/share/keyrings/pritunl.gpg] https://repo.pritunl.com/stable/apt noble main"
+    filename: pritunl
+    state: present
+    update_cache: false
+
+- name: Run apt-get update (as in original instructions)
+  ansible.builtin.command: apt-get update
+  changed_when: false
+  
+- name: Install Pritunl and dependencies
+  apt:
+    name:
+      - pritunl
+      - openvpn
+      - mongodb-org
+      - wireguard
+      - wireguard-tools
+    state: present
+
+- name: Ensure UFW is disabled
+  ansible.builtin.systemd:
+    name: ufw
+    enabled: false
+    state: stopped
+  ignore_errors: true  # UFW may not be installed, and that’s okay
+
+- name: Enable and start MongoDB
+  ansible.builtin.systemd:
+    name: mongod
+    enabled: true
+    state: started
+
+- name: Enable and start Pritunl
+  ansible.builtin.systemd:
+    name: pritunl
+    enabled: true
+    state: started
