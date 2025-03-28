@@ -13,6 +13,8 @@ The homelab setup uses a custom domain `labz.tr` for managing traffic securely o
 - **2 Virtual Machines (VMs)**:
   - **`app-p01`**: Hosts Docker services configured with Swarm and Portainer.
   - **`dns-p01`**: Dedicated to Pi-hole as a DNS server.
+  - **`iot-p01`**: HomeAssistant server that works OS directly.
+  - **`vpn-p01`**: Dedicated to VPN/Tunnel server that uses Pritunl.
 
 VMs are provisioned using Terraform, while Ansible handles software installations and operational maintenance.
 
@@ -83,6 +85,7 @@ Managed by **Homarr**, providing a user-friendly interface to access and manage 
 
 ### Monitoring
 **Netdata** is used for real-time monitoring of system and service performance. It is deployed on `app-p01` with a central dashboard for aggregated insights.
+**Gatus** is used for check service/host statuses. It is deployed on `app-p01` with a central dashboard for aggregated insights.
 
 ### Container Management
 **Portainer** is running on `app-p01` for managing Docker services and stacks.
