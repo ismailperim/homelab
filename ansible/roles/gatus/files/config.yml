@@ -1,0 +1,117 @@
+endpoints:
+  # Infra Group
+  - name: nas
+    group: Infra
+    url: "http://192.168.1.99:8080"
+    interval: 1h
+    conditions:
+      - "[STATUS] == 200"
+      - "[RESPONSE_TIME] < 300"
+  - name: internet
+    group: Infra
+    url: "icmp://1.1.1.1"
+    interval: 1m
+    conditions:
+      - "[CONNECTED] == true"
+  - name: dns-ui
+    group: Infra
+    url: "https://pihole.labz.tr/admin"
+    interval: 1h
+    conditions:
+      - "[STATUS] == 200"
+      - "[RESPONSE_TIME] < 300"
+  - name: dns-tcp
+    group: Infra
+    url: "tcp://192.168.1.102:53"
+    interval: 5m
+    conditions:
+      - "[CONNECTED] == true"
+
+
+  # Servers Group
+  - name: app-p01.labz.tr
+    group: Servers
+    url: "icmp://192.168.1.101"
+    interval: 1m
+    conditions:
+      - "[CONNECTED] == true"
+  - name: app-p02.labz.tr
+    group: Servers
+    url: "icmp://192.168.2.4"
+    interval: 15m
+    conditions:
+      - "[CONNECTED] == true"
+  - name: dns-p01.labz.tr
+    group: Servers
+    url: "icmp://192.168.1.102"
+    interval: 1m
+    conditions:
+      - "[CONNECTED] == true"
+  - name: iot-p01.labz.tr
+    group: Servers
+    url: "icmp://192.168.1.103"
+    interval: 1m
+    conditions:
+      - "[CONNECTED] == true"
+  - name: vpn-p01.labz.tr
+    group: Servers
+    url: "icmp://192.168.1.104"
+    interval: 1m
+    conditions:
+      - "[CONNECTED] == true"
+
+  # Apps Group
+  - name: portainer
+    group: Apps
+    url: "https://portainer.labz.tr"
+    interval: 1h
+    conditions:
+      - "[STATUS] == 200"
+      - "[RESPONSE_TIME] < 300"
+  - name: traefik
+    group: Apps
+    url: "https://traefik.labz.tr/dashboard"
+    interval: 1h
+    conditions:
+      - "[STATUS] == 200"
+      - "[RESPONSE_TIME] < 300"
+  - name: netdata
+    group: Apps
+    url: "https://netdata.labz.tr"
+    interval: 1h
+    conditions:
+      - "[STATUS] == 200"
+      - "[RESPONSE_TIME] < 300"
+  - name: dashboard
+    group: Apps
+    url: "https://dash.labz.tr"
+    interval: 1h
+    conditions:
+      - "[STATUS] == 200"
+      - "[RESPONSE_TIME] < 300"
+
+  # Certificate Group
+  - name: dash.labz.tr
+    group: Certificate
+    url: "tls://dash.labz.tr:443"
+    interval: 12h
+    conditions:
+      - "[CONNECTED] == true"
+      - "[CERTIFICATE_EXPIRATION] > 48h"
+  - name: traefik.labz.tr
+    group: Certificate
+    url: "tls://traefik.labz.tr:443"
+    interval: 12h
+    conditions:
+      - "[CONNECTED] == true"
+      - "[CERTIFICATE_EXPIRATION] > 48h"
+
+
+  # IoT Group
+  - name: homeassistant
+    group: IoT
+    url: "https://ha.labz.tr"
+    interval: 5m
+    conditions:
+      - "[STATUS] == 200"
+      - "[RESPONSE_TIME] < 300"

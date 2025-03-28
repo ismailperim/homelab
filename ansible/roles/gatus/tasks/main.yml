@@ -1,0 +1,57 @@
+- name: Check if Gatus is already running
+  shell: docker stack ls | grep -w gatus
+  register: gatus_status
+  failed_when: false
+  changed_when: false
+
+- name: Ensure Gatus directory exists
+  file:
+    path: /opt/gatus
+    state: directory
+
+- name: Deploy Gatus with Traefik configuration
+  copy:
+    dest: /opt/gatus/docker-compose.yml
+    content: |
+      version: "3.8"
+      services:
+        gatus:
+          image: twinproduction/gatus:latest
+          deploy:
+            mode: replicated
+            replicas: 1
+            placement:
+              constraints:
+                - node.role == manager
+          labels:
+            - "traefik.enable=true"
+            - "traefik.docker.network=traefik_public_network"
+            - "traefik.http.routers.gatus.rule=Host(`status.labz.tr`)"
+            - "traefik.http.routers.gatus.entrypoints=websecure"
+            - "traefik.http.routers.gatus.tls.certresolver=myresolver"
+            - "traefik.http.services.gatus.loadbalancer.server.port=8080"
+          volumes:
+            - /opt/gatus/config.yml:/config/config.yaml
+          networks:
+            - traefik_public_network
+      networks:
+        traefik_public_network:
+          external: true
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Copy Gatus configuration file
+  copy:
+    src: config.yml
+    dest: /opt/gatus/config.yml
+    owner: root
+    group: root
+    mode: "0644"
+      
+- name: Remove Existing Gatus stack
+  when: gatus_status.stdout != ""
+  shell: docker service rm gatus_gatus
+  
+- name: Deploy Gatus stack
+  shell: docker stack deploy -c /opt/gatus/docker-compose.yml gatus
