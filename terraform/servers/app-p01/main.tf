@@ -1,10 +1,11 @@
 locals {
   vmid       = 101
   cpu_cores  = 2
-  memory     = 2048
+  memory     = 3072
   disk_size  = "150G"
   hostname   = "app-p01"
   ip_address = "192.168.1.101"
+  tags       = "prod"
   connection = {
     type        = "ssh"
     user        = "perim.labz.tr"
@@ -24,6 +25,7 @@ module "create-vm" {
   hostname            = local.hostname
   ip_address          = local.ip_address
   gateway             = var.gateway
+  tags                = local.tags
 
   vmid                = local.vmid
   cpu_cores           = local.cpu_cores

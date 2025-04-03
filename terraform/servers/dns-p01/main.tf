@@ -5,6 +5,7 @@ locals {
   disk_size  = "60G"
   hostname   = "dns-p01"
   ip_address = "192.168.1.102"
+  tags       = "prod"
   connection = {
     type        = "ssh"
     user        = "perim.labz.tr"
@@ -24,6 +25,7 @@ module "create-vm" {
   hostname            = local.hostname
   ip_address          = local.ip_address
   gateway             = var.gateway
+  tags                = local.tags
 
   vmid                = local.vmid
   cpu_cores           = local.cpu_cores

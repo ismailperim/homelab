@@ -85,6 +85,7 @@ Managed by **Homarr**, providing a user-friendly interface to access and manage 
 
 ### Monitoring
 **Netdata** is used for real-time monitoring of system and service performance. It is deployed on `app-p01` with a central dashboard for aggregated insights.
+
 **Gatus** is used for check service/host statuses. It is deployed on `app-p01` with a central dashboard for aggregated insights.
 
 ### Container Management

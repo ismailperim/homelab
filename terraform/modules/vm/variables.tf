@@ -17,6 +17,12 @@ variable "vmid" {
   description = "ID number of VM"
   type        = number
 }
+
+variable "tags" {
+  description = "Tags for the VM"
+  type        = string
+}
+
 variable "hostname" {
   description = "Hostname of the VM"
   type        = string
