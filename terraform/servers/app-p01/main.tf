@@ -1,7 +1,7 @@
 locals {
   vmid       = 101
   cpu_cores  = 2
-  memory     = 3072
+  memory     = 4096
   disk_size  = "150G"
   hostname   = "app-p01"
   ip_address = "192.168.1.101"
