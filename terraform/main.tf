@@ -5,6 +5,13 @@ terraform {
       version = "0.0.1"
     }
   }
+  backend "remote" {
+    hostname     = "app.terraform.io"
+    organization = "labztr" 
+    workspaces {
+      name = "homelab"
+    }
+  }
 }
 
 provider "proxmox" {
