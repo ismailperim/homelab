@@ -23,27 +23,58 @@ jobs:
       - name: Set Terraform Cloud Token
         run: echo "TF_TOKEN_app_terraform_io=${{ secrets.TERRAFORM_CLOUD_TOKEN }}" >> $GITHUB_ENV
 
-      - name: Configure SSH Private Key
+      - name: Configure SSH Private Key (Linux/Mac)
+        if: runner.os != 'Windows'
         run: |
           mkdir -p ~/.ssh
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
         shell: bash
 
-      - name: Create terraform.auto.tfvars from Secrets
+      - name: Configure SSH Private Key (Windows)
+        if: runner.os == 'Windows'
+        run: |
+          mkdir $env:USERPROFILE\.ssh
+          Set-Content -Path $env:USERPROFILE\.ssh\id_rsa -Value "${{ secrets.SSH_PRIVATE_KEY }}"
+          icacls "$env:USERPROFILE\.ssh\id_rsa" /inheritance:r /grant:r "$($env:USERNAME):(R)"
+        shell: powershell
+
+
+      - name: Create terraform.auto.tfvars (Linux/macOS)
+        if: runner.os != 'Windows'
         run: |
           cat <<EOF > terraform.auto.tfvars
-          pm_api_url = "${{ secrets.PM_API_URL }}"
-          pm_api_token_id = "${{ secrets.PM_API_TOKEN_ID }}"
-          pm_api_token_secret = "${{ secrets.PM_API_TOKEN_SECRET }}"
-          target_node = "${{ vars.TARGET_NODE }}"
-          storage = "${{ vars.STORAGE }}"
-          clone_template = "${{ vars.CLONE_TEMPLATE }}"
-          gateway = "${{ vars.GATEWAY }}"
-          dns_primary = "${{ vars.DNS_PRIMARY }}"
-          dns_secondary = "${{ vars.DNS_SECONDARY }}"
-          ssh_keys = ${{ secrets.SSH_KEYS }}
+          pm_api_url           = "${{ secrets.PM_API_URL }}"
+          pm_api_token_id      = "${{ secrets.PM_API_TOKEN_ID }}"
+          pm_api_token_secret  = "${{ secrets.PM_API_TOKEN_SECRET }}"
+          target_node          = "${{ vars.TARGET_NODE }}"
+          storage              = "${{ vars.STORAGE }}"
+          clone_template       = "${{ vars.CLONE_TEMPLATE }}"
+          gateway              = "${{ vars.GATEWAY }}"
+          dns_primary          = "${{ vars.DNS_PRIMARY }}"
+          dns_secondary        = "${{ vars.DNS_SECONDARY }}"
+          ssh_keys             = ${{ secrets.SSH_KEYS }}
           EOF
+        shell: bash
+
+      - name: Create terraform.auto.tfvars (Windows)
+        if: runner.os == 'Windows'
+        run: |
+          $tfvars = @"
+          pm_api_url           = "${{ secrets.PM_API_URL }}"
+          pm_api_token_id      = "${{ secrets.PM_API_TOKEN_ID }}"
+          pm_api_token_secret  = "${{ secrets.PM_API_TOKEN_SECRET }}"
+          target_node          = "${{ vars.TARGET_NODE }}"
+          storage              = "${{ vars.STORAGE }}"
+          clone_template       = "${{ vars.CLONE_TEMPLATE }}"
+          gateway              = "${{ vars.GATEWAY }}"
+          dns_primary          = "${{ vars.DNS_PRIMARY }}"
+          dns_secondary        = "${{ vars.DNS_SECONDARY }}"
+          ssh_keys             = ${{ secrets.SSH_KEYS }}
+          "@
+          Set-Content -Path terraform.auto.tfvars -Value $tfvars
+        shell: powershell
+
 
       - name: Terraform Init
         run: terraform init
