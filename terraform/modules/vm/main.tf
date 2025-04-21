@@ -47,7 +47,7 @@ resource "proxmox_vm_qemu" "vm" {
     inline = [
       "curl -X PUT -k -H \"Authorization: PVEAPIToken=${var.pm_api_token_id}=${var.pm_api_token_secret}\" -d disk=scsi0 -d size=${var.disk_size} \"${var.pm_api_url}/nodes/${var.target_node}/qemu/${var.vmid}/resize\"",
       "sleep 5",
-      "sudo apt-get update",
+      "sudo apt-get update -y",
       "sudo growpart /dev/sda 1",
       "sudo resize2fs /dev/sda1"
     ]
