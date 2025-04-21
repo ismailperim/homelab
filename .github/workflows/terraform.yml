@@ -34,9 +34,9 @@ jobs:
       - name: Configure SSH Private Key (Windows)
         if: runner.os == 'Windows'
         run: |
-          mkdir $env:USERPROFILE\.ssh
-          Set-Content -Path $env:USERPROFILE\.ssh\id_rsa -Value "${{ secrets.SSH_PRIVATE_KEY }}"
-          icacls "$env:USERPROFILE\.ssh\id_rsa" /inheritance:r /grant:r "$($env:USERNAME):(R)"
+          $sshDir = "$env:USERPROFILE\.ssh"
+          New-Item -ItemType Directory -Force -Path $sshDir | Out-Null
+          Set-Content -Path "$sshDir\id_rsa" -Value "${{ secrets.SSH_PRIVATE_KEY }}"
         shell: powershell
 
 
