@@ -6,5 +6,5 @@ storage = "local-lvm"
 clone_template = "ubuntu-cloud"
 gateway = "192.168.1.1"
 dns_primary = "192.168.1.102"
-dns_scondary = "8.8.8.8"
+dns_secondary = "8.8.8.8"
 ssh_keys = [ "***SSH_KEY***" ]

@@ -41,7 +41,7 @@ variable "dns_primary" {
   type        = string
 }
 
-variable "dns_scondary" {
+variable "dns_secondary" {
   description = "Secondary DNS Server Address"
   type        = string
 }
