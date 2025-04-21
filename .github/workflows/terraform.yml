@@ -38,7 +38,7 @@ jobs:
         if: runner.os != 'Windows'
         run: |
           cat <<EOF > terraform.auto.tfvars
-          pm_api_url           = "${{ secrets.PM_API_URL }}"
+          pm_api_url           = "${{ vars.PM_API_URL }}"
           pm_api_token_id      = "${{ secrets.PM_API_TOKEN_ID }}"
           pm_api_token_secret  = "${{ secrets.PM_API_TOKEN_SECRET }}"
           target_node          = "${{ vars.TARGET_NODE }}"
@@ -55,7 +55,7 @@ jobs:
         if: runner.os == 'Windows'
         run: |
           $tfvars = @"
-          pm_api_url           = "${{ secrets.PM_API_URL }}"
+          pm_api_url           = "${{ vars.PM_API_URL }}"
           pm_api_token_id      = "${{ secrets.PM_API_TOKEN_ID }}"
           pm_api_token_secret  = "${{ secrets.PM_API_TOKEN_SECRET }}"
           target_node          = "${{ vars.TARGET_NODE }}"
