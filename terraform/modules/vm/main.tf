@@ -46,10 +46,7 @@ resource "proxmox_vm_qemu" "vm" {
 
   provisioner "local-exec" {
     command = <<EOT
-      curl -X PUT -k \
-      -H "Authorization: PVEAPIToken=${var.pm_api_token_id}=${var.pm_api_token_secret}" \
-      -d disk=scsi0 -d size=${var.disk_size} \
-      "${var.pm_api_url}/nodes/${var.target_node}/qemu/${var.vmid}/resize"
+      curl -X PUT -k -H "Authorization: PVEAPIToken=${var.pm_api_token_id}=${var.pm_api_token_secret}" -d disk=scsi0 -d size=${var.disk_size} "${var.pm_api_url}/nodes/${var.target_node}/qemu/${var.vmid}/resize"
     EOT
   }
 
