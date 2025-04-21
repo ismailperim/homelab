@@ -76,6 +76,13 @@ jobs:
         shell: powershell
 
 
+      - name: Show working directory and files (Windows)
+        run: |
+          Write-Host "Current dir: $(Get-Location)"
+          Get-ChildItem -Recurse
+        shell: powershell
+        if: runner.os == 'Windows'
+
       - name: Terraform Init
         run: terraform init -reconfigure
         env:
