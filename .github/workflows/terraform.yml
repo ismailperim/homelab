@@ -17,12 +17,6 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v3
 
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v2
-      
-      - name: Set Terraform Cloud Token
-        run: echo "TF_TOKEN_app_terraform_io=${{ secrets.TERRAFORM_CLOUD_TOKEN }}" >> $GITHUB_ENV
-
       - name: Configure SSH Private Key (Linux/Mac)
         if: runner.os != 'Windows'
         run: |
@@ -75,13 +69,8 @@ jobs:
           Set-Content -Path terraform.auto.tfvars -Value $tfvars
         shell: powershell
 
-
-      - name: Show working directory and files (Windows)
-        run: |
-          Write-Host "Current dir: $(Get-Location)"
-          Get-ChildItem -Recurse
-        shell: powershell
-        if: runner.os == 'Windows'
+      - name: Terraform Version
+        run: terraform version
 
       - name: Terraform Init
         run: terraform init -reconfigure
