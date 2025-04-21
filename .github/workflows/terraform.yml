@@ -1,0 +1,58 @@
+name: Terraform Deploy
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  terraform:
+    runs-on: self-hosted
+    defaults:
+      run:
+        working-directory: ./terraform
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+      
+      - name: Set Terraform Cloud Token
+        run: echo "TF_TOKEN_app_terraform_io=${{ secrets.TERRAFORM_CLOUD_TOKEN }}" >> $GITHUB_ENV
+
+      - name: Configure SSH Private Key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+        shell: bash
+
+      - name: Create terraform.auto.tfvars from Secrets
+        run: |
+          cat <<EOF > terraform.auto.tfvars
+          pm_api_url = "${{ secrets.PM_API_URL }}"
+          pm_api_token_id = "${{ secrets.PM_API_TOKEN_ID }}"
+          pm_api_token_secret = "${{ secrets.PM_API_TOKEN_SECRET }}"
+          target_node = "${{ vars.TARGET_NODE }}"
+          storage = "${{ vars.STORAGE }}"
+          clone_template = "${{ vars.CLONE_TEMPLATE }}"
+          gateway = "${{ vars.GATEWAY }}"
+          dns_primary = "${{ vars.DNS_PRIMARY }}"
+          dns_secondary = "${{ vars.DNS_SECONDARY }}"
+          ssh_keys = ${{ secrets.SSH_KEYS }}
+          EOF
+
+      - name: Terraform Init
+        run: terraform init
+
+      - name: Terraform Validate
+        run: terraform validate
+
+      - name: Terraform Plan
+        run: terraform plan -out=tfplan
+
+      #- name: Terraform Apply
+      #  run: terraform apply -auto-approve tfplan
