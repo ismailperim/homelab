@@ -15,7 +15,7 @@ endpoints:
       - "[CONNECTED] == true"
   - name: dns-ui
     group: Infra
-    url: "https://pihole.labz.tr/admin"
+    url: "https://pihole.labz.tr/admin/login"
     interval: 1h
     conditions:
       - "[STATUS] == 200"
