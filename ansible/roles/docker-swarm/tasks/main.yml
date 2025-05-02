@@ -8,4 +8,4 @@
   shell: docker swarm init
   when:
       - "'Swarm: active' not in docker_info.stdout"
-      - inventory_hostname == groups['swarm_manager'][0]
+#      - inventory_hostname == groups['swarm_manager'][0]

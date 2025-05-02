@@ -1,0 +1,9 @@
+- hosts: ops-p01
+  become: true
+  roles:
+    - maintenance
+    - localization
+    - docker-engine
+    - docker-swarm
+    - kestra
+    

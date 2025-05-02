@@ -1,0 +1,33 @@
+- name: Check if Kestra stack is already running
+  shell: docker stack ls | grep -w kestra
+  register: kestra_status
+  failed_when: false
+  changed_when: false
+
+- name: Ensure required directories exist
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+  loop:
+    - /opt/kestra
+    - /opt/kestra/data
+    - /opt/kestra/postgres
+    - /tmp/kestra-wd
+
+- name: Copy Kestra Docker Compose file
+  copy:
+    src: docker-compose.yml
+    dest: /opt/kestra/docker-compose.yml
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Remove Existing Kestra stack
+  when: kestra_status.stdout != ""
+  shell: docker stack rm kestra
+
+- name: Deploy Kestra stack
+  shell: docker stack deploy -c /opt/kestra/docker-compose.yml kestra
