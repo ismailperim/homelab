@@ -1,4 +1,6 @@
 name: Update Gatus Configuration
+permissions:
+  contents: read
 
 on:
   workflow_dispatch:  
