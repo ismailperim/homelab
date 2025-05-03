@@ -9,7 +9,7 @@ on:
 
 jobs:
   run-ansible:
-    runs-on: self-hosted
+    runs-on: Linux
     defaults:
       run:
         working-directory: ./ansible
@@ -18,22 +18,12 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
       
-      - name: Configure SSH Private Key (Linux/Mac)
-        if: runner.os != 'Windows'
+      - name: Configure SSH Private Key
         run: |
           mkdir -p ~/.ssh
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
         shell: bash
-
-      - name: Configure SSH Private Key (Windows)
-        if: runner.os == 'Windows'
-        run: |
-          $sshDir = "$env:USERPROFILE\.ssh"
-          New-Item -ItemType Directory -Force -Path $sshDir | Out-Null
-          Set-Content -Path "$sshDir\id_rsa" -Value "${{ secrets.SSH_PRIVATE_KEY }}"
-        shell: powershell
-
 
       - name: Run Ansible playbook
         run: |
