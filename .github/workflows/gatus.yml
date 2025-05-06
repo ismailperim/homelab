@@ -6,6 +6,7 @@ on:
   workflow_dispatch:  
   push:
     paths:
+      - 'ansible/roles/gatus/**'
       - 'ansible/playbooks/install-gatus.yml'
       - '.github/workflows/gatus.yml'
 
