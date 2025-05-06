@@ -1,0 +1,6 @@
+- hosts: mon-p01
+  become: true
+  roles:
+    - maintenance
+    - localization
+    - pritunl-client

@@ -1,0 +1,67 @@
+- name: Manually add Pritunl repo and GPG key (compact shell version)
+  shell: |
+    echo "deb https://repo.pritunl.com/stable/apt noble main" | tee /etc/apt/sources.list.d/pritunl.list && \
+    apt-get -y install gnupg && \
+    gpg --keyserver hkp://keyserver.ubuntu.com --recv-keys 7568D9BB55FF9E5287D586017AE645C0CF8E292A && \
+    gpg --armor --export 7568D9BB55FF9E5287D586017AE645C0CF8E292A | tee /etc/apt/trusted.gpg.d/pritunl.asc && \
+    apt-get update
+  args:
+    executable: /bin/bash
+
+
+- name: Install Pritunl client
+  apt:
+    name: pritunl-client
+    state: present
+
+- name: Check if VPN profile file exists
+  stat:
+    path: "{{ pritunl_profile_path }}"
+  register: vpn_profile_stat
+
+- name: Fail if VPN profile file is missing
+  fail:
+    msg: "Profile file {{ pritunl_profile_path }} not found. Please manually copy this file to the host."
+  when: not vpn_profile_stat.stat.exists
+
+- name: Check if profile is already imported
+  command: pritunl-client list
+  register: vpn_list
+  changed_when: false
+
+- name: Determine whether any profiles exist
+  set_fact:
+    profile_imported: "{{ vpn_list.stdout_lines | length > 4 }}"
+
+- name: Set VPN UUID if profile already exists
+  set_fact:
+    pritunl_profile_uuid: "{{ vpn_list.stdout_lines[3].split('|')[1] | trim }}"
+  when: profile_imported
+
+- name: Import VPN profile if not already imported
+  command: "pritunl-client add {{ pritunl_profile_path }}"
+  register: import_result
+  when: not profile_imported
+  changed_when: "'imported' in import_result.stdout"
+
+- name: Check if profile is already imported
+  command: pritunl-client list
+  register: vpn_list
+  changed_when: false
+
+- name: Determine whether any profiles exist
+  set_fact:
+    profile_imported: "{{ vpn_list.stdout_lines | length > 4 }}"
+
+- name: Set VPN UUID if profile already exists
+  set_fact:
+    pritunl_profile_uuid: "{{ vpn_list.stdout_lines[3].split('|')[1] | trim }}"
+  when: profile_imported
+
+- name: Enable autostart for Pritunl client
+  command: "pritunl-client enable {{ pritunl_profile_uuid }}"
+  when: profile_imported
+
+- name: Enable start for Pritunl client
+  command: "pritunl-client start {{ pritunl_profile_uuid }}"
+  when: profile_imported

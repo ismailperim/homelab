@@ -26,7 +26,12 @@ endpoints:
     interval: 5m
     conditions:
       - "[CONNECTED] == true"
-
+  - name: vpn-udp
+    group: Infra
+    url: "udp://192.168.1.104:14524"
+    interval: 5m
+    conditions:
+      - "[CONNECTED] == true"
 
   # Servers Group
   - name: app-p01.labz.tr
@@ -35,7 +40,7 @@ endpoints:
     interval: 1m
     conditions:
       - "[CONNECTED] == true"
-  - name: app-p02.labz.tr
+  - name: mon-p01.labz.tr
     group: Servers
     url: "icmp://192.168.2.4"
     interval: 15m
@@ -56,6 +61,18 @@ endpoints:
   - name: vpn-p01.labz.tr
     group: Servers
     url: "icmp://192.168.1.104"
+    interval: 1m
+    conditions:
+      - "[CONNECTED] == true"
+  - name: ops-p01.labz.tr
+    group: Servers
+    url: "icmp://192.168.1.105"
+    interval: 1m
+    conditions:
+      - "[CONNECTED] == true"
+  - name: ops-p02.labz.tr
+    group: Servers
+    url: "icmp://192.168.1.110"
     interval: 1m
     conditions:
       - "[CONNECTED] == true"
@@ -115,3 +132,9 @@ endpoints:
     conditions:
       - "[STATUS] == 200"
       - "[RESPONSE_TIME] < 300"
+  - name: krm-garage-door-device
+    group: IoT
+    url: "https://krm-garage-door-monitor.ismailperim.workers.dev"
+    interval: 15m
+    conditions:
+      - "[STATUS] == 200"
