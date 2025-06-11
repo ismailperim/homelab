@@ -13,6 +13,10 @@ on:
 jobs:
   run-ansible:
     runs-on: Linux
+    env:
+      CLOUDFLARE_EMAIL: ${{ secrets.CLOUDFLARE_EMAIL }}
+      CLOUDFLARE_API_KEY: ${{ secrets.CLOUDFLARE_API_KEY }}
+      ACME_EMAIL:    ${{ secrets.CLOUDFLARE_EMAIL }}
     defaults:
       run:
         working-directory: ./ansible
