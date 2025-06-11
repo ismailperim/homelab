@@ -24,6 +24,14 @@ http:
         certresolver: myresolver
       service: pihole-service
     
+    n8n:
+      rule: "Host(`n8n.labz.tr`)"
+      entryPoints:
+        - websecure
+      tls:
+        certresolver: myresolver
+      service: n8n-service
+    
     homeassistant:
       rule: "Host(`ha.labz.tr`)"
       entryPoints:
@@ -47,6 +55,11 @@ http:
       loadBalancer:
         servers:
           - url: "http://192.168.1.102:8080"
+
+    n8n-service:
+      loadBalancer:
+        servers:
+          - url: "http://192.168.1.105:5678"
 
     homeassistant-service:
       loadBalancer:

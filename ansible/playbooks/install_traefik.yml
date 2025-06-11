@@ -1,0 +1,5 @@
+- hosts: app-p01
+  become: true
+  roles:
+    - traefik
+    
