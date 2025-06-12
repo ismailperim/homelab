@@ -138,3 +138,12 @@ endpoints:
     interval: 15m
     conditions:
       - "[STATUS] == 200"
+
+
+  # HouseKeeping
+  - name: pihole-update-status
+    group: HouseKeeping
+    url: "https://n8n.labz.tr/webhook/222e5936-435a-4f5f-92f1-f300f749bc54"
+    interval: 12h
+    conditions:
+      - "[STATUS] == 200"
