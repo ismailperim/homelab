@@ -141,9 +141,41 @@ endpoints:
 
 
   # HouseKeeping
-  - name: pihole-update-status
+  - name: pihole-update
     group: HouseKeeping
     url: "https://n8n.labz.tr/webhook/222e5936-435a-4f5f-92f1-f300f749bc54"
     interval: 12h
     conditions:
       - "[STATUS] == 200"
+  - name: app-p01-update
+    group: HouseKeeping
+    url: "https://n8n.labz.tr/webhook/update-check?hostname=app-p01.labz.tr"
+    interval: 12h
+    conditions:
+      - "[STATUS] == 200"
+  - name: dns-p01-update
+    group: HouseKeeping
+    url: "https://n8n.labz.tr/webhook/update-check?hostname=dns-p01.labz.tr"
+    interval: 12h
+    conditions:
+      - "[STATUS] == 200"
+  - name: iot-p01-update
+    group: HouseKeeping
+    url: "https://n8n.labz.tr/webhook/update-check?hostname=iot-p01.labz.tr"
+    interval: 12h
+    conditions:
+      - "[STATUS] == 200"
+  - name: vpn-p01-update
+    group: HouseKeeping
+    url: "https://n8n.labz.tr/webhook/update-check?hostname=vpn-p01.labz.tr"
+    interval: 12h
+    conditions:
+      - "[STATUS] == 200"
+  - name: ops-p01-update
+    group: HouseKeeping
+    url: "https://n8n.labz.tr/webhook/update-check?hostname=ops-p01.labz.tr"
+    interval: 12h
+    conditions:
+      - "[STATUS] == 200"
+
+      
