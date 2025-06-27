@@ -111,17 +111,31 @@ endpoints:
   - name: dash.labz.tr
     group: Certificate
     url: "tls://dash.labz.tr:443"
-    interval: 12h
+    interval: 24h
     conditions:
       - "[CONNECTED] == true"
-      - "[CERTIFICATE_EXPIRATION] > 48h"
+      - "[CERTIFICATE_EXPIRATION] > 72h"
   - name: traefik.labz.tr
     group: Certificate
     url: "tls://traefik.labz.tr:443"
-    interval: 12h
+    interval: 24h
     conditions:
       - "[CONNECTED] == true"
-      - "[CERTIFICATE_EXPIRATION] > 48h"
+      - "[CERTIFICATE_EXPIRATION] > 72h"
+  - name: vpn.labz.tr
+    group: Certificate
+    url: "tls://vpn.labz.tr:443"
+    interval: 24h
+    conditions:
+      - "[CONNECTED] == true"
+      - "[CERTIFICATE_EXPIRATION] > 72h"
+  - name: srv01.labz.tr
+    group: Certificate
+    url: "tls://srv01.labz.tr:8006"
+    interval: 24h
+    conditions:
+      - "[CONNECTED] == true"
+      - "[CERTIFICATE_EXPIRATION] > 72h"
 
 
   # IoT Group
