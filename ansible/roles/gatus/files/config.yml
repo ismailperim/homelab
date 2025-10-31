@@ -63,12 +63,12 @@ endpoints:
     interval: 1m
     conditions:
       - "[CONNECTED] == true"
-  - name: ops-p02.labz.tr
-    group: Servers
-    url: "icmp://192.168.1.110"
-    interval: 1m
-    conditions:
-      - "[CONNECTED] == true"
+#  - name: ops-p02.labz.tr
+#    group: Servers
+#    url: "icmp://192.168.1.110"
+#    interval: 1m
+#    conditions:
+#      - "[CONNECTED] == true"
 
   # Apps Group
   - name: portainer
