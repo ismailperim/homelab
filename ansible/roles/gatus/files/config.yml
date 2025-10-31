@@ -106,6 +106,13 @@ endpoints:
     conditions:
       - "[STATUS] == 200"
       - "[RESPONSE_TIME] < 300"
+  - name: fayn-api
+    group: Apps
+    url: "https://api.fayn.tr"
+    interval: 1h
+    conditions:
+      - "[STATUS] == 200"
+      - "[RESPONSE_TIME] < 300"
 
   # Certificate Group
   - name: dash.labz.tr
