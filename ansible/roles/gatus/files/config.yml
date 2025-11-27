@@ -159,6 +159,12 @@ endpoints:
     interval: 15m
     conditions:
       - "[STATUS] == 200"
+  - name: heater-device
+    group: IoT
+    url: "https://n8n.labz.tr/webhook/heater/monitor"
+    interval: 5m
+    conditions:
+      - "[STATUS] == 200"
 
 
   # HouseKeeping
