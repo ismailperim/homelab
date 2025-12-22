@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  waha:
+    image: devlikeapro/waha:{{ waha_version | default('latest') }}
+    networks:
+      - traefik_public_network
+    environment:
+      - WAHA_PRINT_QR=True
+      - WAHA_API_KEY={{ waha_api_key }}
+      - WAHA_HTTP_USERNAME={{ waha_http_username | default('admin') }}
+      - WAHA_HTTP_PASSWORD={{ waha_http_password }}
+      - WHATSAPP_RESTART_ALL_SESSIONS=True
+      - WAHA_SWAGGER_ENABLED=True
+      - WAHA_SWAGGER_USERNAME={{ waha_swagger_username | default('admin') }}
+      - WAHA_SWAGGER_PASSWORD={{ waha_swagger_password }}
+    volumes:
+      - waha_data:/app/.sessions
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+      labels:
+        - "traefik.enable=true"
+        - "traefik.docker.network=traefik_public_network"
+        - "traefik.http.routers.waha.rule=Host(`{{ waha_hostname | default('waha.labz.tr') }}`)"
+        - "traefik.http.routers.waha.entrypoints=websecure"
+        - "traefik.http.routers.waha.tls.certresolver=myresolver"
+        - "traefik.http.services.waha.loadbalancer.server.port=3000"
+
+networks:
+  traefik_public_network:
+    external: true
+
+volumes:
+  waha_data:

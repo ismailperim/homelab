@@ -1,0 +1,38 @@
+---
+- name: Check if waha stack is already deployed
+  ansible.builtin.shell: docker stack ls | grep -w waha
+  register: waha_stack_check
+  ignore_errors: yes
+  changed_when: false
+
+- name: Create waha directory
+  ansible.builtin.file:
+    path: /opt/waha
+    state: directory
+    mode: '0755'
+
+- name: Copy docker-compose file
+  ansible.builtin.template:
+    src: docker-compose.yml.j2
+    dest: /opt/waha/docker-compose.yml
+    mode: '0644'
+
+- name: Remove existing waha stack if found
+  ansible.builtin.shell: docker stack rm waha
+  when: waha_stack_check.rc == 0
+  register: waha_remove
+  changed_when: waha_remove.rc == 0
+
+- name: Wait for waha stack to be removed
+  ansible.builtin.pause:
+    seconds: 10
+  when: waha_stack_check.rc == 0
+
+- name: Deploy waha stack
+  ansible.builtin.shell: docker stack deploy -c /opt/waha/docker-compose.yml waha
+  register: waha_deploy
+  changed_when: waha_deploy.rc == 0
+
+- name: Display waha deployment status
+  ansible.builtin.debug:
+    msg: "WAHA stack deployed successfully. Access it at https://{{ waha_hostname | default('waha.labz.tr') }}"

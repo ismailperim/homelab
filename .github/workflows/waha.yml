@@ -1,0 +1,40 @@
+name: Update WAHA Configuration
+permissions:
+  contents: read
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'ansible/roles/waha/**'
+      - 'ansible/playbooks/install_waha.yml'
+      - '.github/workflows/waha.yml'
+
+jobs:
+  run-ansible:
+    runs-on: Linux
+    env:
+      WAHA_API_KEY: ${{ secrets.WAHA_API_KEY }}
+      WAHA_HTTP_USERNAME: ${{ secrets.WAHA_HTTP_USERNAME }}
+      WAHA_HTTP_PASSWORD: ${{ secrets.WAHA_HTTP_PASSWORD }}
+      WAHA_SWAGGER_USERNAME: ${{ secrets.WAHA_SWAGGER_USERNAME }}
+      WAHA_SWAGGER_PASSWORD: ${{ secrets.WAHA_SWAGGER_PASSWORD }}
+    defaults:
+      run:
+        working-directory: ./ansible
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Configure SSH Private Key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+        shell: bash
+
+      - name: Run Ansible playbook
+        run: |
+          ssh-keyscan -H 192.168.1.101 >> ~/.ssh/known_hosts
+          ansible-playbook -i inventory/hosts.yml playbooks/install_waha.yml

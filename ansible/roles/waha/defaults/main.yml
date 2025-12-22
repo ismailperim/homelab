@@ -1,0 +1,15 @@
+---
+# WAHA configuration defaults
+waha_version: "latest"
+waha_hostname: "waha.labz.tr"
+
+# API Key - Loaded from environment variables (GitHub Secrets)
+waha_api_key: "{{ lookup('env', 'WAHA_API_KEY') }}"
+
+# HTTP Basic Auth - Loaded from environment variables (GitHub Secrets)
+waha_http_username: "{{ lookup('env', 'WAHA_HTTP_USERNAME') | default('admin', true) }}"
+waha_http_password: "{{ lookup('env', 'WAHA_HTTP_PASSWORD') }}"
+
+# Swagger UI Auth - Loaded from environment variables (GitHub Secrets)
+waha_swagger_username: "{{ lookup('env', 'WAHA_SWAGGER_USERNAME') | default('admin', true) }}"
+waha_swagger_password: "{{ lookup('env', 'WAHA_SWAGGER_PASSWORD') }}"
