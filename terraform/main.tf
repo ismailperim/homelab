@@ -80,15 +80,3 @@ module "server-ops-p01" {
   clone_template      = var.clone_template
   ssh_keys            = var.ssh_keys
 }
-
-module "server-pbx-p01" {
-  source              = "./servers/pbx-p01"
-  pm_api_url          = var.pm_api_url
-  pm_api_token_id     = var.pm_api_token_id
-  pm_api_token_secret = var.pm_api_token_secret
-  target_node         = var.target_node
-  gateway             = var.gateway
-  storage             = var.storage
-  clone_template      = var.clone_template
-  ssh_keys            = var.ssh_keys
-}
