@@ -105,7 +105,24 @@ endpoints:
     interval: 1h
     conditions:
       - "[STATUS] == 200"
-      - "[RESPONSE_TIME] < 300"
+      - "[RESPONSE_TIME] < 500"
+  - name: upti-api
+    group: Apps
+    url: "https://backend.upti.tr"
+    interval: 15m
+    conditions:
+      - "[STATUS] == 200"
+      - "[RESPONSE_TIME] < 500"
+      - "[BODY].status == healthy"
+      - "[BODY].backend.d1_database.status == healthy"
+  - name: certwarden-api
+    group: Apps
+    url: "https://certwarden.perim.net"
+    interval: 15m
+    conditions:
+      - "[STATUS] == 200"
+      - "[RESPONSE_TIME] < 500"
+      - "[BODY].status == healthy"
 
   # Certificate Group
   - name: dash.labz.tr
