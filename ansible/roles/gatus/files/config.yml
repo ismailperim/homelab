@@ -85,13 +85,6 @@ endpoints:
     conditions:
       - "[STATUS] == 200"
       - "[RESPONSE_TIME] < 300"
-  - name: dashboard
-    group: Apps
-    url: "https://dash.labz.tr"
-    interval: 1h
-    conditions:
-      - "[STATUS] == 200"
-      - "[RESPONSE_TIME] < 300"
   - name: n8n
     group: Apps
     url: "https://n8n.labz.tr"
