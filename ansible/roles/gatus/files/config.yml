@@ -2,7 +2,7 @@ endpoints:
   # Infra Group
   - name: internet
     group: Infra
-    url: "icmp://1.1.1.1"
+    url: "icmp://8.8.8.8"
     interval: 1m
     conditions:
       - "[CONNECTED] == true"
@@ -116,6 +116,15 @@ endpoints:
       - "[STATUS] == 200"
       - "[RESPONSE_TIME] < 500"
       - "[BODY].status == healthy"
+  - name: suitsnap-api
+    group: Apps
+    url: "https://suitsnap.perim.net"
+    interval: 15m
+    conditions:
+      - "[STATUS] == 200"
+      - "[RESPONSE_TIME] < 500"
+      - "[BODY].status == ok"
+
 
   # Certificate Group
   - name: dash.labz.tr
