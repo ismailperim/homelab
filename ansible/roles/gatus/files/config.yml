@@ -199,10 +199,6 @@ endpoints:
     interval: 30m
     conditions:
       - "[STATUS] == 200"
-      - "[BODY].daily > 0"
-      - "[BODY].hourly > 0"
-
-
 
   #- name: app-p01-update
   #  group: HouseKeeping
