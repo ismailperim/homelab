@@ -1,0 +1,61 @@
+- name: Check if Metabase is already running
+  shell: docker stack ls | grep -w metabase
+  register: metabase_status
+  failed_when: false
+  changed_when: false
+
+- name: Ensure Metabase directory exists
+  file:
+    path: /opt/metabase
+    state: directory
+
+- name: Deploy Metabase with Traefik configuration
+  copy:
+    dest: /opt/metabase/docker-compose.yml
+    content: |
+      version: "3.8"
+      services:
+        metabase:
+          image: metabase/metabase:latest
+          deploy:
+            mode: replicated
+            replicas: 1
+            placement:
+              constraints:
+                - node.role == manager
+          labels:
+            - "traefik.enable=true"
+            - "traefik.docker.network=traefik_public_network"
+            - "traefik.http.routers.metabase.rule=Host(`analytics.labz.tr`)"
+            - "traefik.http.routers.metabase.entrypoints=websecure"
+            - "traefik.http.routers.metabase.tls.certresolver=myresolver"
+            - "traefik.http.services.metabase.loadbalancer.server.port=3000"
+          environment:
+            JAVA_TIMEZONE: "{{ time_zone }}"
+          volumes:
+            - metabase_data:/metabase.db
+          networks:
+            - traefik_public_network
+
+      volumes:
+        metabase_data:
+          driver: local
+
+      networks:
+        traefik_public_network:
+          external: true
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Remove existing Metabase stack
+  when: metabase_status.stdout != ""
+  shell: docker stack rm metabase
+
+- name: Wait for stack removal
+  when: metabase_status.stdout != ""
+  pause:
+    seconds: 10
+
+- name: Deploy Metabase stack
+  shell: docker stack deploy -c /opt/metabase/docker-compose.yml metabase
