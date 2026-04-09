@@ -124,7 +124,14 @@ endpoints:
       - "[STATUS] == 200"
       - "[RESPONSE_TIME] < 500"
       - "[BODY].status == ok"
-
+  - name: besidefteri-api
+    group: Apps
+    url: "https://api.besidefteri.com/health"
+    interval: 15m
+    conditions:
+      - "[STATUS] == 200"
+      - "[RESPONSE_TIME] < 500"
+      - "[BODY].status == ok"
 
   # Certificate Group
   - name: dash.labz.tr
@@ -183,9 +190,20 @@ endpoints:
   - name: pihole-update
     group: HouseKeeping
     url: "https://n8n.labz.tr/webhook/222e5936-435a-4f5f-92f1-f300f749bc54"
-    interval: 12h
+    interval: 30m
     conditions:
       - "[STATUS] == 200"
+  - name: supabase-backup
+    group: HouseKeeping
+    url: "https://n8n.labz.tr/webhook/supabase-backup"
+    interval: 30m
+    conditions:
+      - "[STATUS] == 200"
+      - "[BODY].daily > 0"
+      - "[BODY].hourly > 0"
+
+
+
   #- name: app-p01-update
   #  group: HouseKeeping
   #  url: "https://n8n.labz.tr/webhook/update-check?hostname=app-p01.labz.tr"
