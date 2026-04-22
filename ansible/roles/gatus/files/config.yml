@@ -138,8 +138,7 @@ endpoints:
     interval: 15m
     conditions:
       - "[STATUS] == 200"
-      - "[RESPONSE_TIME] < 500"
-
+      
   # Certificate Group
   - name: dash.labz.tr
     group: Certificate
